@@ -10,18 +10,20 @@ var numberOfGifDisplayed = 0;
 var favoriteselected = 0
 var favoritGif = [];
 var selectedGif = [];
+var allThisTopicResponse=[];
+var indexOfThisResponse;
 
 
 function displayTopicInfo() {
 
   if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() <= 25 && $("#CustomSelectLimit").val() > 0) {
         $("#display-selected-animal").html("");
-        $("#favoriteselected").text("");//favoritechecked
+        // $("#favoriteselected").text("");//favoritechecked
         $("#addtofavorite").text("");
         $("#middleDiv").html("");
         $("#resetdiv").html("");
         $("#addmoregif").html("");
-
+        allThisTopicResponse=[];
         offset = 0;
         favoriteselected = 0;
         topic = $(this).attr("data-name");
@@ -42,7 +44,8 @@ function displayTopicInfo() {
         addmore.attr("id", "add");
         $("#addmoregif").append(addmore)
         setFavoriteButton("disabled","true");
-
+        removeTooltip("#addtofavorite") 
+        deleteTooltip("#addtofavorite")
         getTopicGif();
   }
   else if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() > 25) {
@@ -81,26 +84,37 @@ function getTopicGif() {
 
     console.log(response);
     results = response.data;
-
-    for (var i = 0; i < results.length; i++) {
-      var ctrl = $('<input/>').attr({ type: 'checkbox', name: 'check', value: results[i].images.fixed_height.url }).addClass("rad");  //checkbox      
+      allThisTopicResponse.push(results);
+      indexOfThisResponse=allThisTopicResponse.indexOf(results)
+           iterateTheResponse(indexOfThisResponse);
+       
+          });
+        }
+        function iterateTheResponse(start){
+          var ctrl;
+          for(start;start<allThisTopicResponse.length;start++){
+          for (var i = 0; i < allThisTopicResponse[start].length; i++) {
+      // var ctrl = $('<input/>').attr({ type: 'checkbox', name: 'check', value: allThisTopicResponse[start][i].images.fixed_height.url }).addClass("rad");  //checkbox      
       var animalDiv = $("<div>");
       var p = $("<p>");
       p.addClass("text-muted");
-      p.text("Rating: " + results[i].rating);
+      p.text("Rating: " + allThisTopicResponse[start][i].rating);
       var animalImage = $("<img>");
-      animalDiv.addClass("col-md-auto")
-
+      animalDiv.addClass("col-md-auto ")
       animalImage.addClass("clickToAnimate border border-white")
-      if (screenWidth >= 768) {  //if document width greater or equal to 768 capture fixed-hight            
-        animalImage.attr("src", results[i].images.fixed_height_still.url);
-        animalImage.attr("data-still", results[i].images.fixed_height_still.url);
-        animalImage.attr("data-animate", results[i].images.fixed_height.url);
+      if (screenWidth >= 768) {  //if document width greater or equal to 768 capture fixed-hight   
+        ctrl = $('<input/>').attr({ type: 'checkbox', name: 'check', value: allThisTopicResponse[start][i].images.fixed_height.url }).addClass("rad");  //checkbox      
+        $('.rad').prop('indeterminate', true)
+        animalImage.attr("src",allThisTopicResponse[start][i].images.fixed_height_still.url);
+        animalImage.attr("data-still",allThisTopicResponse[start][i].images.fixed_height_still.url);
+        animalImage.attr("data-animate", allThisTopicResponse[start][i].images.fixed_height.url);
       }
       else {//if document width is less than 768 capture fixed-hight-small image
-        animalImage.attr("src", results[i].images.fixed_height_small_still.url);
-        animalImage.attr("data-still", results[i].images.fixed_height_small_still.url);
-        animalImage.attr("data-animate", results[i].images.fixed_height_small.url);
+        ctrl = $('<input/>').attr({ type: 'checkbox', name: 'check', value: allThisTopicResponse[start][i].images.fixed_height_small.url }).addClass("rad");  //checkbox      
+
+        animalImage.attr("src", allThisTopicResponse[start][i].images.fixed_height_small_still.url);
+        animalImage.attr("data-still", allThisTopicResponse[start][i].images.fixed_height_small_still.url);
+        animalImage.attr("data-animate", allThisTopicResponse[start][i].images.fixed_height_small.url);
       }
       animalImage.attr("data-state", "still");
       animalImage.attr("title", "Click The Image To Animate");
@@ -109,7 +123,7 @@ function getTopicGif() {
       animalDiv.append(animalImage);
       $("#display-selected-animal").append(animalDiv)
     }
-  });
+  }
 
 }
 
@@ -200,12 +214,14 @@ function removeTooltip(id) {
 function reSetGifDisplay() {
   $(".displaygif").html("");
   $("#middleDiv").html("");
+  removeTooltip("#addtofavorite"); 
+  deleteTooltip("#addtofavorite");
 
 }
 
 function checkFavorite() {
 
-  $("#favoriteselected").text("");
+  // $("#favoriteselected").text("");
   $("#addtofavorite").html("");
   if ($(this).is(":checked")) {//check one of the radio button is checked
     favoriteselected++;
@@ -219,8 +235,11 @@ function checkFavorite() {
   }
 
   setFavoriteButton("enabled", "true");
+  // $("#addtofavorite").append("Item selected" + " " + favoriteselected);
+  $("#addtofavorite").attr("data-original-title", "Item selected" + " " + favoriteselected)
+  $("#addtofavorite").tooltip("show");
   //addToFavorite();
-  $("#favoriteselected").text("Total item selected" + " " + favoriteselected);
+  //$("#favoriteselected").text("Item selected" + " " + favoriteselected);
 }
 
 
@@ -229,14 +248,17 @@ function setFavoriteButton(property,value) {
   f.addClass("btn btn-outline-light");
   f.attr("id", "addFavoriteButton")
   f.attr(property, value)
-  f.text("Add to Favorite");
+  f.html("Add To Favorite");
   $("#addtofavorite").append(f);
 }
 
 function addToFavorite() {
   var numberOfGifaddedToFavorit = 0;
   var numberOfGifalreadyFoundInFavorit=0
-  //favoriteselected=0;
+  favoriteselected=0;
+  removeTooltip("#addtofavorite") 
+  deleteTooltip("#addtofavorite")
+ 
     selectedGif.forEach(function (gif) {
       if (!favoritGif.includes(gif)) {
         favoritGif.push(gif);
@@ -246,7 +268,7 @@ function addToFavorite() {
         numberOfGifalreadyFoundInFavorit++; 
       }
     })
-    $("#favoriteselected").html(" ");
+    // $("#favoriteselected").html(" ");
     $("#addtofavorite").html("");
     setFavoriteButton("disabled", "true");
     $("#myfavorit").html("My Favorit<br>"+favoritGif.length+" "+"items");
@@ -269,18 +291,22 @@ function addToFavorite() {
               setTimeout(removeTooltip, 7000,"#myfavorit");
               setTimeout(deleteTooltip, 4000,"#myfavorit");
              }
+             $("#display-selected-animal").html("");
+             favoriteselected=0;
+             iterateTheResponse(0);  
 
 }
 
   function getmyfavorit(){
-      $(".displaygif").html("");
-      $("#middleDiv").html("");   
+      
+      if(favoritGif.length>0)  {
+        $(".displaygif").html("");
+      $("#middleDiv").html(""); 
       $("#displayinfo").text("Now Displaying your Favorite");
-
       for(var i=0;i<favoritGif.length;i++){      
           var animalDiv = $("<div>");
           var animalImage = $("<img>");
-          animalDiv.addClass("col-md-auto")
+          animalDiv.addClass("col-md-auto my-2")
           animalImage.attr("src", favoritGif[i]);
           animalDiv.append(animalImage);
           animalDiv.append(animalImage);
@@ -293,6 +319,15 @@ function addToFavorite() {
       $("#resetdiv").append(closebtn)
 
   }
+  else{
+             $("#myfavorit").attr("data-original-title","you have no item to display");
+              $("#myfavorit").tooltip("show");
+              setTimeout(removeTooltip, 5000,"#myfavorit");
+              setTimeout(deleteTooltip, 4000,"#myfavorit");
+             }
+
+  }
+
   function deleteTooltip(id){
       $(id).removeAttr("data-original-title");
     
