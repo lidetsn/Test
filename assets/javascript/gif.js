@@ -15,42 +15,49 @@ var selectedGif = [];
 function displayTopicInfo() {
 
   if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() <= 25 && $("#CustomSelectLimit").val() > 0) {
-    $("#display-selected-animal").html("");
-    $("#favoriteselected").text("");//favoritechecked
-    $("#addtofavorite").text("");
-    $("#middleDiv").html("");
-    offset = 0;
-    favoriteselected = 0;
-    $("#middleDiv").html("");
-    topic = $(this).attr("data-name");
-    limit = parseInt($("#CustomSelectLimit").val());
-    numberOfGifDisplayed = limit;
-    $("#displayinfo").text("Now Displaying" + " " + numberOfGifDisplayed + " " + topic.toUpperCase() + " " + "Gif");
-    $("#resetdiv").html("");
-    var r = $("<button>");
-    r.text("Close")
-    r.addClass("btn btn-outline-light");
-    r.attr("id", "reset");
-    $("#resetdiv").append(r)
-    $("#addmoregif").html("");
-    var addmore = $("<button>");
-    addmore.text("Add more")
-    addmore.addClass("btn btn-outline-light");
-    addmore.attr("id", "add");
-    $("#addmoregif").append(addmore)
-    getTopicGif();
+        $("#display-selected-animal").html("");
+        $("#favoriteselected").text("");//favoritechecked
+        $("#addtofavorite").text("");
+        $("#middleDiv").html("");
+        $("#resetdiv").html("");
+        $("#addmoregif").html("");
+
+        offset = 0;
+        favoriteselected = 0;
+        topic = $(this).attr("data-name");
+        limit = parseInt($("#CustomSelectLimit").val());
+        numberOfGifDisplayed = limit;
+
+        $("#displayinfo").text("Now Displaying" + " " + numberOfGifDisplayed + " " + topic.toUpperCase() + " " + "Gif");
+           //a button to close the displayed gif
+        var closebtn = $("<button>");
+        closebtn.text("Close")
+        closebtn.addClass("btn btn-outline-light");
+        closebtn.attr("id", "reset");
+        $("#resetdiv").append(closebtn)
+            //a button to add more gif
+        var addmore = $("<button>");
+        addmore.text("Add more")
+        addmore.addClass("btn btn-outline-light");
+        addmore.attr("id", "add");
+        $("#addmoregif").append(addmore)
+        setFavoriteButton("disabled","true");
+
+        getTopicGif();
   }
   else if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() > 25) {
 
-    $("#CustomSelectLimit").attr("data-original-title", "Maximum  25 at atime")
-    $("#CustomSelectLimit").tooltip("show");
-    setTimeout(removeTooltip, 3000);
+        $("#CustomSelectLimit").attr("data-original-title", "Maximum  25 at atime")
+        $("#CustomSelectLimit").tooltip("show");
+        setTimeout(removeTooltip, 3000,"#CustomSelectLimit");
+        setTimeout(deleteTooltip, 4000,"#CustomSelectLimit");
   }
   else {
 
-    $("#CustomSelectLimit").attr("data-original-title", "please put the limit to display")
-    $("#CustomSelectLimit").tooltip("show");
-    setTimeout(removeTooltip, 3000);
+        $("#CustomSelectLimit").attr("data-original-title", "please put the limit to display")
+        $("#CustomSelectLimit").tooltip("show");
+        setTimeout(removeTooltip, 3000,"#CustomSelectLimit");
+        setTimeout(deleteTooltip, 4000,"#CustomSelectLimit");
   }
 }
 function addMoreGif() {
@@ -106,9 +113,6 @@ function getTopicGif() {
 
 }
 
-
-
-
 function animateThePic() {
 
   var state = $(this).attr("data-state");
@@ -154,43 +158,43 @@ $(document).ready(function () {
   screenWidth = $(document).width();//get the width of the document to display approperiate gif according to the size
   //$("#middleDiv").text(selectedFavoritGif.length);//test the width
   renderButtons();
-  $("#topic-input").mouseover(function () {
-    $("#topic-input").removeAttr("data-original-title");
-    $("#CustomSelectLimit").removeAttr("data-original-title");
-  });
-
+  
   $("#add-topic").on("click", function (event) {
-    event.preventDefault();
-    $("#middleDiv").html("");
-    if ($("#topic-input").val()) {//prevent empty insertion
+        event.preventDefault();
+        $("#middleDiv").html("");
+        if ($("#topic-input").val()) {//prevent empty insertion
 
-      var topic = $("#topic-input").val();
-      $("#topic-input").val("");
-      if (!topics.includes(topic.toLowerCase())) {//prevent duplicate insertion                          
-        topics.push(topic.toLowerCase());
-        renderButtons();
-      }
-      else {
+          var topic = $("#topic-input").val();
+          $("#topic-input").val("");
+          if (!topics.includes(topic.toLowerCase())) {//prevent duplicate insertion                          
+            topics.push(topic.toLowerCase());
+            renderButtons();
+          }
+          else {
 
-        //$("#topicinput").attr("title",topic+"already exist in the list")
-        $("#topic-input").attr("data-original-title", topic.toUpperCase() + " already exist in the list")
-        $("#topic-input").tooltip("show");
-        setTimeout(removeTooltip, 4000);
-      }
-    }
-    else {
-      // $("#topicinput").attr("title","please enter the name of the animal")
-      $("#topic-input").attr("data-original-title", "please enter the name of the animal to add")
-      $("#topic-input").tooltip("show");
-      setTimeout(removeTooltip, 4000);
-    }
+            //$("#topicinput").attr("title",topic+"already exist in the list")
+            $("#topic-input").attr("data-original-title", topic.toUpperCase() + " already exist in the list")
+            $("#topic-input").tooltip("show");
+            setTimeout(removeTooltip, 4000,"#topic-input");
+            setTimeout(deleteTooltip, 4000,"#topic-input");
+          }
+        }
+        else {
+          // $("#topicinput").attr("title","please enter the name of the animal")
+          $("#topic-input").attr("data-original-title", "please enter the name of the animal to add")
+          $("#topic-input").tooltip("show");
+          setTimeout(removeTooltip, 4000,"#topic-input");
+          setTimeout(deleteTooltip, 4000,"#topic-input");
+        }
   });
 
 });
 
-function removeTooltip() {
-  $("#topic-input").tooltip("hide");
-  $("#CustomSelectLimit").tooltip("hide");
+function removeTooltip(id) {
+  $(id).tooltip("hide");
+  // $("#topic-input").tooltip("hide");
+  // $("#CustomSelectLimit").tooltip("hide");
+  // $("#myfavorit").tooltip("hide");
 }
 
 function reSetGifDisplay() {
@@ -214,16 +218,17 @@ function checkFavorite() {
     selectedGif.splice(index, 1);
   }
 
-  setFavoriteButton();
+  setFavoriteButton("enabled", "true");
   //addToFavorite();
   $("#favoriteselected").text("Total item selected" + " " + favoriteselected);
 }
 
 
-function setFavoriteButton() {
+function setFavoriteButton(property,value) {
   var f = $("<button>");
   f.addClass("btn btn-outline-light");
   f.attr("id", "addFavoriteButton")
+  f.attr(property, value)
   f.text("Add to Favorite");
   $("#addtofavorite").append(f);
 }
@@ -231,7 +236,7 @@ function setFavoriteButton() {
 function addToFavorite() {
   var numberOfGifaddedToFavorit = 0;
   var numberOfGifalreadyFoundInFavorit=0
-
+  //favoriteselected=0;
     selectedGif.forEach(function (gif) {
       if (!favoritGif.includes(gif)) {
         favoritGif.push(gif);
@@ -241,30 +246,54 @@ function addToFavorite() {
         numberOfGifalreadyFoundInFavorit++; 
       }
     })
-  
+    $("#favoriteselected").html(" ");
+    $("#addtofavorite").html("");
+    setFavoriteButton("disabled", "true");
     $("#myfavorit").html("My Favorit<br>"+favoritGif.length+" "+"items");
   
   selectedGif = [];
   
-  $("#middleDiv").html(numberOfGifaddedToFavorit + " " + "gif added to favorite" + "<br>" + 
+  // $("#middleDiv").html(numberOfGifaddedToFavorit + " " + "gif added to favorite" + "<br>" + 
+  //             numberOfGifalreadyFoundInFavorit+" "+"of the selected already found in your favorit");
+            if(numberOfGifalreadyFoundInFavorit===0){
+              $("#myfavorit").attr("data-original-title", numberOfGifaddedToFavorit + " " + "gif added to Favorite")
+              $("#myfavorit").tooltip("show");
+                setTimeout(removeTooltip, 3000,"#myfavorit");
+                setTimeout(deleteTooltip, 4000,"#myfavorit");
+            }
+             else{
+              $("#myfavorit").attr("data-original-title", numberOfGifaddedToFavorit + " " + 
+              "gif added to Favorite"+" "+
               numberOfGifalreadyFoundInFavorit+" "+"of the selected already found in your favorit");
-
+              $("#myfavorit").tooltip("show");
+              setTimeout(removeTooltip, 7000,"#myfavorit");
+              setTimeout(deleteTooltip, 4000,"#myfavorit");
+             }
 
 }
 
   function getmyfavorit(){
-  $(".displaygif").html("");
-  $("#middleDiv").html("");
-  
-  
-  for(var i=0;i<favoritGif.length;i++){
-    var animalDiv = $("<div>");
-  var animalImage = $("<img>");
-  animalDiv.addClass("col-md-auto")
-  animalImage.attr("src", favoritGif[i]);
-        animalDiv.append(animalImage);
-       animalDiv.append(animalImage);
-      $("#display-selected-animal").append(animalDiv)
-  }
+      $(".displaygif").html("");
+      $("#middleDiv").html("");   
+      $("#displayinfo").text("Now Displaying your Favorite");
 
-}
+      for(var i=0;i<favoritGif.length;i++){      
+          var animalDiv = $("<div>");
+          var animalImage = $("<img>");
+          animalDiv.addClass("col-md-auto")
+          animalImage.attr("src", favoritGif[i]);
+          animalDiv.append(animalImage);
+          animalDiv.append(animalImage);
+          $("#display-selected-animal").append(animalDiv)
+      }
+      var closebtn = $("<button>");
+      closebtn.text("Close")
+      closebtn.addClass("btn btn-outline-light");
+      closebtn.attr("id", "reset");
+      $("#resetdiv").append(closebtn)
+
+  }
+  function deleteTooltip(id){
+      $(id).removeAttr("data-original-title");
+    
+  }
