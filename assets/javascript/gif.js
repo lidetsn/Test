@@ -134,7 +134,6 @@ function animateThePic() {
 }
 
 
-
 $(document).on("click", ".topic-btn", displayTopicInfo);
 $(document).on("click", ".clickToAnimate", animateThePic);
 $(document).on("click", "#reset", reSetGifDisplay);
@@ -147,10 +146,14 @@ $(document).on("click", "#myfavorit", getMyFavorit);
 $(document).ready(function () {
           screenWidth = $(document).width();//get the width of the document to display approperiate gif according to the size
           renderTopicButtons();
-  
+          if(screenWidth<768){
+              $("#mygif").removeClass("rightSideMiddle");
+              $("#myfavorit").removeClass("btn-outline-light");
+              $("#myfavorit").addClass("btn-outline-info");
+          }
          $("#add-topic").on("click", function (event) {
                event.preventDefault();
-              //  $("#middleDiv").html("");
+              
         if ($("#topic-input").val()) {//prevent empty insertion
 
               var topic = $("#topic-input").val();
@@ -308,8 +311,9 @@ function addToFavorite() {
       var closebtn = $("<button>");
       closebtn.addClass("btn btn-outline-light bg-info");   
       if(screenWidth<768) {
+        closebtn.addClass("smallDevice")
         closebtn.attr("title","click to Go back") 
-        closebtn.html("&#8678;") ;  
+        closebtn.html("&#8678;<br>Back") ;  
         }   
         else{
           closebtn.html("Back") ;  
@@ -325,8 +329,9 @@ function addToFavorite() {
         f.attr("id", "addFavoriteButton")
         f.attr(property, value)
         if(screenWidth<768) {
+            f.addClass("smallDevice")
             f.attr("title","Add to Favorit")
-            f.html("&#10032;");
+            f.html("&#10032;<br>Add to Favorit");
         }
         else{
           f.html("Add To Favorit");
@@ -336,7 +341,8 @@ function addToFavorite() {
   function  makeAddMoreButton(){
     var addmore = $("<button>");
         if(screenWidth<768) {
-            addmore.html("&#10010;")
+            addmore.addClass("smallDevice")
+            addmore.html("&#10010;<br>Add More")
             addmore.attr("title","Add More")
         }
        else{
