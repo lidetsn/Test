@@ -17,7 +17,9 @@ var indexOfThisResponse;
 function displayTopicInfo() {
 
   if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() <= 25 && $("#CustomSelectLimit").val() > 0) {
-        
+       //   option 2 hiding the two container
+            $("#inner-container-2").hide();
+            $("#inner-container-1").hide();
         $(".displaygif").html("")
         allThisTopicResponse=[];
         offset = 0;
@@ -28,13 +30,15 @@ function displayTopicInfo() {
 
         $("#displayinfo").text("Now Displaying" + " " + numberOfGifDisplayed + " " + topic.toUpperCase() + " " + "Gif");
            //a button to close the displayed gif
+
         makeCloseButton();
         makeAddMoreButton();
         setFavoriteButton("disabled","true");
         removeTooltip("#addtofavorite") 
         deleteTooltip("#addtofavorite")
         getTopicGif();
-  }
+        //here
+      }
   else if ($("#CustomSelectLimit").val() && $("#CustomSelectLimit").val() > 25) {
 
         $("#CustomSelectLimit").attr("data-original-title", "Maximum  25 at atime")
@@ -180,6 +184,9 @@ function removeTooltip(id) {
 }
 
 function reSetGifDisplay() {
+  // option 2 hiding the two container
+          $("#inner-container-2").show();
+         $("#inner-container-1").show();
           $(".displaygif").html("");
           removeTooltip("#addtofavorite"); 
           deleteTooltip("#addtofavorite");
@@ -251,6 +258,9 @@ function addToFavorite() {
   function getMyFavorit(){
       
       if(favoritGif.length>0)  {
+                  //  option 2 hiding the two container
+                    $("#inner-container-2").hide();
+                    $("#inner-container-1").hide();
               $(".displaygif").html("");
               $("#middleDiv").html(""); 
               $("#displayinfo").text("Now Displaying"+" "+ favoritGif.length+" "+"of your Favorite Gif");
@@ -296,10 +306,17 @@ function addToFavorite() {
   function makeCloseButton(){
 
       var closebtn = $("<button>");
-      closebtn.addClass("btn btn-outline-light bg-info");     
-       closebtn.html("&times") ;     
-      closebtn.attr("id", "reset");     
-      $("#resetdiv").append(closebtn)
+      closebtn.addClass("btn btn-outline-light bg-info");   
+      if(screenWidth<768) {
+        closebtn.attr("title","click to Go back") 
+        closebtn.html("&#8678;") ;  
+        }   
+        else{
+          closebtn.html("Back") ;  
+        }   
+        
+       closebtn.attr("id", "reset");     
+       $("#resetdiv").append(closebtn)
   }
 
   function setFavoriteButton(property,value) {
@@ -307,13 +324,26 @@ function addToFavorite() {
         f.addClass("btn btn-outline-light");
         f.attr("id", "addFavoriteButton")
         f.attr(property, value)
-        f.html("Add To Favorite");
+        if(screenWidth<768) {
+            f.attr("title","Add to Favorit")
+            f.html("&#10032;");
+        }
+        else{
+          f.html("Add To Favorit");
+        }
         $("#addtofavorite").append(f);
   }
   function  makeAddMoreButton(){
     var addmore = $("<button>");
-        addmore.text("Add more")
+        if(screenWidth<768) {
+            addmore.html("&#10010;")
+            addmore.attr("title","Add More")
+        }
+       else{
+         addmore.html("Add More")
+        }
         addmore.addClass("btn btn-outline-light");
         addmore.attr("id", "add");
         $("#addmoregif").append(addmore)
   }
+
